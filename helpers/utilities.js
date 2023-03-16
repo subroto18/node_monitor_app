@@ -11,6 +11,7 @@
 
 let crypto = require('crypto');
 const environmentToExport  = require('../helpers/environments');
+
 // app object  - module scaffolding
 
 const utilitis = {};
@@ -44,6 +45,49 @@ utilitis.hash = function (str){
     return hash;
     }
 }
+
+utilitis.createToken = function (phone){
+     let randomString = "abcdef123456asdaw2dads";
+     let token = "";
+      for(let i = 0 ;i<10;i++){
+        token += randomString[Math.floor(Math.random() * 15)];
+     }
+     return token;
+
+}
+
+  
+
+
+utilitis.checkAuthorization = function (requestProperties){
+    const list = {};
+
+     const cookieHeader = requestProperties?.headersObject?.cookie;
+     const tokenHeader = requestProperties?.headersObject?.authorization;
+
+    if (!cookieHeader){
+       return false;
+    }else{
+        cookieHeader.split(`;`).forEach(function(cookie) {
+            let [ name, ...rest] = cookie.split(`=`);
+            name = name?.trim();
+            if (!name) return;
+            const value = rest.join(`=`).trim();
+            if (!value) return;
+            list[name] = decodeURIComponent(value);
+        });
+
+        if(list['token']){
+            return list['token']===tokenHeader ? true:false  ;
+        }else{
+            return false;
+        }
+    
+    }
+
+}
+
+
 
 
 

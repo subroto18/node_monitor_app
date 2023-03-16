@@ -15,7 +15,7 @@ const {read,create} = require("../../lib/data");
 const data = require("../../lib/data");
 // const data = require("../../lib/data");
 
-const {hash,JSON_PARSE} = require('../../helpers/utilities')
+const {hash,JSON_PARSE,checkAuthorization} = require('../../helpers/utilities')
 
 // app object  - module scaffolding
 
@@ -42,35 +42,44 @@ handler._users = {};
 handler._users.get = (requestProperties,callback) =>{
 
 
-    const phone = typeof(requestProperties.queryStringObject.phone)==="string" && 
-    requestProperties.queryStringObject.phone.trim().length>=10 ? requestProperties.queryStringObject.phone:false;
+   let auth  = checkAuthorization(requestProperties);
 
-    if(phone){
-        let phone = requestProperties.queryStringObject.phone;
-
-        read('users',phone,(err,user)=>{
-            const n_user = {...JSON_PARSE(user)}
-            if(!err && user){
-                delete n_user.password;
-                callback(200,n_user);
-            }else{
-                callback(404,{
-                    'message':'user not found'
-                });  
-            }
-        })
-
+    if(auth){
+        const phone = typeof(requestProperties.queryStringObject.phone)==="string" && 
+        requestProperties.queryStringObject.phone.trim().length>=10 ? requestProperties.queryStringObject.phone:false;
+    
+        if(phone){
+            let phone = requestProperties.queryStringObject.phone;
+    
+            read('users',phone,(err,user)=>{
+                const n_user = {...JSON_PARSE(user)}
+                if(!err && user){
+                    delete n_user.password;
+                    callback(200,n_user);
+                }else{
+                    callback(404,{
+                        'message':'user not found'
+                    });  
+                }
+            })
+    
+            
+        }else{
+            callback(404,{
+                'message':'user not found'
+            });
         
+        }
     }else{
-        callback(404,{
-            'message':'user not found'
+        callback(403,{
+            'message':'Unauthorized!'
         });
     
     }
 
-
   
 }
+
 
 handler._users.post = (requestProperties,callback) =>{
 
@@ -97,7 +106,7 @@ handler._users.post = (requestProperties,callback) =>{
 
       read('users',phone,(err,data)=>{
 
-        console.log(err,data,'da da daad a');
+
           if(err){
 
             const userObj =  {

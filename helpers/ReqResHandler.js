@@ -13,7 +13,7 @@ const url = require("url");
 const {StringDecoder} = require("string_decoder");
 const routes = require('../routes');
 const decoder = new StringDecoder('utf-8');
-const {JSON_PARSE} = require('../helpers/utilities')
+const {JSON_PARSE,createToken} = require('../helpers/utilities')
 
 const {notFoundHandler} = require("../handlers/routeHandler/notFoundHandler");
 
@@ -54,6 +54,7 @@ responseHandler.handleResRes = (req, res) => {
   };
 
 
+
     const chosenHandler = routes[trimmedPath] ? routes[trimmedPath] : notFoundHandler;
 
 
@@ -69,13 +70,39 @@ req.on('end', () => {
      chosenHandler(requestProperties, (statusCode, payload) => {
        statusCode = typeof statusCode === 'number' ? statusCode : 500;
        payload = typeof payload === 'object' ? payload : {};
-
        const payloadString = JSON.stringify(payload);
 
-      // return the final response
-       res.setHeader('Content-Type','application/json')
-       res.writeHead(statusCode);
-       res.end(payloadString);
+       // if login success set a token in login cookie and send it to client also
+
+        if(payload.message==='Authorized'){
+
+          // make a token using users phone number
+          const token = createToken(requestProperties.body.phone);
+          // return the final response
+          res.setHeader('Content-Type','application/json')
+          res.writeHead(statusCode, { 
+            'Set-Cookie':`token=${token}; expires=`+new Date(new Date().getTime()+86409000).toUTCString(),
+          });
+
+          // convert stringify data to json and put tokan then again convert into stringify
+
+          let payloadData = JSON.parse(payloadString);
+          payloadData.token = token;
+          res.end(JSON.stringify(payloadData));
+
+         }else{
+
+             // return the final response
+            res.setHeader('Content-Type','application/json')
+            res.end(payloadString);
+             
+         }
+
+
+
+
+
+   
   });
 
     // response handle
