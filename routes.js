@@ -14,13 +14,15 @@ const {aboutHandler} = require('./handlers/routeHandler/aboutHandler');
 const {userHandler} = require('./handlers/routeHandler/userHandler');
 const {registerHandler} = require('./handlers/routeHandler/registrationHandler');
 const {loginHandler} = require('./handlers/routeHandler/loginHandler');
+const {checksHandler} = require('./handlers/routeHandler/checksHandler');
 // app object  - module scaffolding
 
 const routes = { 
     'sample':sampleHandler,
     'user':userHandler,
     'register':registerHandler,
-    'login':loginHandler
+    'login':loginHandler,
+    'checks':checksHandler,
 }
 
 

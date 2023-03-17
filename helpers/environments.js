@@ -15,14 +15,16 @@ const environment = {};
 environment.staging = {
     PORT:3000,
     envName:'staging',
-    secretKey:'mySecretKey'
+    secretKey:'mySecretKey',
+    max_checks:5
 }
 
 
 environment.production = {
     PORT:5000,
     envName:'production',
-    secretKey:'mySecretKey'
+    secretKey:'mySecretKey',
+    max_checks:5
 }
 
 

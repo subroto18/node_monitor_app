@@ -47,16 +47,42 @@ utilitis.hash = function (str){
 }
 
 utilitis.createToken = function (phone){
-     let randomString = "abcdef123456asdaw2dads";
+     let randomString = "awsrtcicpdsvjfmds";
+     var strNum = phone.toString()
      let token = "";
-      for(let i = 0 ;i<10;i++){
-        token += randomString[Math.floor(Math.random() * 15)];
+      for(let i = 0 ;i<strNum.length;i++){
+        const randomCharacter = randomString.charAt(Math.floor(Math.random() * randomString.length));
+        const randomNum = strNum.charAt(Math.floor(Math.random() * strNum.length));
+        token += randomCharacter+strNum[i]
      }
      return token;
-
 }
 
-  
+
+utilitis.getNumberFromToken = function (token){
+
+  //  console.log(token);
+    let number = "";
+     for(let i = 0 ;i<token.length;i++){
+         let num = Number(token[i])
+         if(i%2!==0){
+            number = number+num;
+         }
+    }
+
+   return Number(number);
+}
+
+
+utilitis.createUniqueId = function (phone){
+    let randomString = "abcdef123456asdaw2dads";
+    let id = "";
+     for(let i = 0 ;i<10;i++){
+        id += randomString[Math.floor(Math.random() * 15)];
+    }
+    return id;
+}
+
 
 
 utilitis.checkAuthorization = function (requestProperties){
@@ -64,7 +90,6 @@ utilitis.checkAuthorization = function (requestProperties){
 
      const cookieHeader = requestProperties?.headersObject?.cookie;
      const tokenHeader = requestProperties?.headersObject?.authorization;
-
     if (!cookieHeader){
        return false;
     }else{
@@ -78,7 +103,14 @@ utilitis.checkAuthorization = function (requestProperties){
         });
 
         if(list['token']){
-            return list['token']===tokenHeader ? true:false  ;
+            if(list['token']===tokenHeader){
+                let phone =  utilitis.getNumberFromToken(tokenHeader)
+                return phone;
+            }else{
+                return false;
+            }
+
+        
         }else{
             return false;
         }
@@ -86,10 +118,6 @@ utilitis.checkAuthorization = function (requestProperties){
     }
 
 }
-
-
-
-
 
 
 

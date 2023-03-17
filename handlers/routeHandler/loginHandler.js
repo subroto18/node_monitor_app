@@ -13,6 +13,8 @@ const {read,create} = require("../../lib/data");
 const data = require("../../lib/data");
 // const data = require("../../lib/data");
 
+const storage = require('node-sessionstorage')
+
 const {hash,JSON_PARSE,createToken,setCookie} = require('../../helpers/utilities')
 
 // app object  - module scaffolding
@@ -42,26 +44,20 @@ handler._login.post = (requestProperties,callback) =>{
  
     const phone = typeof(requestProperties.body.phone)==="number" && requestProperties.body.phone.toString().length>=10 ? requestProperties.body.phone:false;
 
-
     const password = typeof(requestProperties.body.password)==="string" && requestProperties.body.password.trim().length>5 ? requestProperties.body.password:false;
-
-
 
     if(phone &&  password ){
 
-
         // make sure that the user data is not there in data file
-
         // first parameter is folder name
         // second parameter is file name
 
         read('users',phone,(err,user)=>{
             const n_user = {...JSON_PARSE(user)}
             if(!err && user){
-
                 if(n_user.password===hash(password)){
                     callback(200,{
-                        'message':'Authorized'
+                        'message':'Authorized',
                     });  
                 }else{
                     callback(403,{

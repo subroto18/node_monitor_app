@@ -41,10 +41,9 @@ handler._users = {};
 
 handler._users.get = (requestProperties,callback) =>{
 
-
-   let auth  = checkAuthorization(requestProperties);
-
-    if(auth){
+    // if user authorize, then will get user phone number 
+   let authPhone  = checkAuthorization(requestProperties);
+    if(authPhone){
         const phone = typeof(requestProperties.queryStringObject.phone)==="string" && 
         requestProperties.queryStringObject.phone.trim().length>=10 ? requestProperties.queryStringObject.phone:false;
     
@@ -77,7 +76,6 @@ handler._users.get = (requestProperties,callback) =>{
     
     }
 
-  
 }
 
 
@@ -97,15 +95,11 @@ handler._users.post = (requestProperties,callback) =>{
 
     if(firstName && lastName && phone && password && toAggrement ){
 
-
         // make sure that the user data is not there in data file
 
         // first parameter is folder name
         // second parameter is file name
-
-
-      read('users',phone,(err,data)=>{
-
+        read('users',phone,(err,data)=>{
 
           if(err){
 
@@ -135,14 +129,13 @@ handler._users.post = (requestProperties,callback) =>{
                 'message':'Server error'
             })
           }
-      })
+        })
 
     }else{
         callback(400,{
             'message':'Error in request body'
         })
     }
-
 
  }
 
