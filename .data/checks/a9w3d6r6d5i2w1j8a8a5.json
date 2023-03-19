@@ -1,0 +1,9 @@
+{
+  "id": "1dad4ddbca",
+  "phone": 9366521885,
+  "protocol": "https",
+  "url": "www.google.com",
+  "method": "get",
+  "successCodes": [200, 201],
+  "timeoutSeconds": 1
+}
